@@ -17,6 +17,7 @@ import publicRoutes from './routes/publicRoutes.js';
 import reportRoutes from './routes/reportRoutes.js';
 import scheduleManagementRoutes from './routes/scheduleManagementRoutes.js';
 import feedbackRoutes from './routes/feedbackRoutes.js';
+import categoryRoutes from './routes/categoryRoutes.js'; 
 import {
   User,
   Category,
@@ -64,6 +65,44 @@ app.use('/api/public', publicRoutes);
 app.use('/api/reports', reportRoutes);
 app.use('/api/schedule-management', scheduleManagementRoutes);
 app.use('/api/feedback', feedbackRoutes);
+app.use('/api/categories', categoryRoutes); // Добавьте эту строку для категорий
+
+app.get('/api/services/categories', async (req, res) => {
+  try {
+    const categories = await Category.findAll();
+    res.json(categories);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+app.get('/api/public/work-photos', async (req, res) => {
+  try {
+    const worksDir = path.join(__dirname, 'uploads', 'works');
+    if (!fs.existsSync(worksDir)) {
+      return res.json([]);
+    }
+    const files = fs.readdirSync(worksDir);
+    const photos = files.filter(file => /\.(jpg|jpeg|png|gif|webp)$/i.test(file)).map(file => ({
+      id: file,
+      imageUrl: file,
+      masterName: 'Мастер',
+      description: '',
+      categoryId: null
+    }));
+    res.json(photos);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+app.get('/api/public/promotions', async (req, res) => {
+  try {
+    res.json([]);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
 
 app.get('/api/health', (req, res) => {
   res.json({ status: 'OK', message: 'Сервер работает' });
@@ -91,7 +130,7 @@ const startServer = async () => {
     await sequelize.sync({ alter: true });
     console.log('Синхронизация моделей завершена');
     
-        const PORT = process.env.PORT || 5000;
+    const PORT = process.env.PORT || 5000;
     const server = app.listen(PORT, '0.0.0.0', () => {
       console.log('\nСервер запущен\n');
     });
