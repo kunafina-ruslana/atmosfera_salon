@@ -1,3 +1,4 @@
+// AdminPanel.js - обновленный
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import axios from 'axios';
@@ -56,85 +57,86 @@ const AdminPanel = () => {
     setLoading(false);
   };
 
-const fetchUsers = async () => {
-  try {
-    const response = await axios.get('/api/admin/users');
-    setUsers(Array.isArray(response.data) ? response.data : []);
-  } catch (error) {
-    console.error('Ошибка загрузки пользователей:', error);
-    setUsers([]);
-  }
-};
+  const fetchUsers = async () => {
+    try {
+      const response = await axios.get('/api/admin/users');
+      setUsers(Array.isArray(response.data) ? response.data : []);
+    } catch (error) {
+      console.error('Ошибка загрузки пользователей:', error);
+      setUsers([]);
+    }
+  };
 
-const fetchServices = async () => {
-  try {
-    const response = await axios.get('/api/services');
-    setServices(Array.isArray(response.data) ? response.data : []);
-  } catch (error) {
-    console.error('Ошибка загрузки услуг:', error);
-    setServices([]);
-  }
-};
+  const fetchServices = async () => {
+    try {
+      const response = await axios.get('/api/services');
+      setServices(Array.isArray(response.data) ? response.data : []);
+    } catch (error) {
+      console.error('Ошибка загрузки услуг:', error);
+      setServices([]);
+    }
+  };
 
-const fetchCategories = async () => {
-  try {
-    const response = await axios.get('/api/services/categories');
-    setCategories(Array.isArray(response.data) ? response.data : []);
-  } catch (error) {
-    console.error('Ошибка загрузки категорий:', error);
-    setCategories([]);
-  }
-};
+  const fetchCategories = async () => {
+    try {
+      const response = await axios.get('/api/services/categories');
+      setCategories(Array.isArray(response.data) ? response.data : []);
+    } catch (error) {
+      console.error('Ошибка загрузки категорий:', error);
+      setCategories([]);
+    }
+  };
 
-const fetchMasters = async () => {
-  try {
-    const response = await axios.get('/api/admin/masters');
-    setMasters(Array.isArray(response.data) ? response.data : []);
-  } catch (error) {
-    console.error('Ошибка загрузки мастеров:', error);
-    setMasters([]);
-  }
-};
+  const fetchMasters = async () => {
+    try {
+      const response = await axios.get('/api/admin/masters');
+      setMasters(Array.isArray(response.data) ? response.data : []);
+    } catch (error) {
+      console.error('Ошибка загрузки мастеров:', error);
+      setMasters([]);
+    }
+  };
 
-const fetchAppointments = async () => {
-  try {
-    const response = await axios.get('/api/admin/appointments');
-    setAppointments(Array.isArray(response.data) ? response.data : []);
-  } catch (error) {
-    console.error('Ошибка загрузки записей:', error);
-    setAppointments([]);
-  }
-};
+  const fetchAppointments = async () => {
+    try {
+      const response = await axios.get('/api/admin/appointments');
+      setAppointments(Array.isArray(response.data) ? response.data : []);
+    } catch (error) {
+      console.error('Ошибка загрузки записей:', error);
+      setAppointments([]);
+    }
+  };
 
-const fetchReviews = async () => {
-  try {
-    const response = await axios.get('/api/reviews/all');
-    setReviews(Array.isArray(response.data) ? response.data : []);
-  } catch (error) {
-    console.error('Ошибка загрузки отзывов:', error);
-    setReviews([]);
-  }
-};
+  const fetchReviews = async () => {
+    try {
+      const response = await axios.get('/api/reviews/all');
+      setReviews(Array.isArray(response.data) ? response.data : []);
+    } catch (error) {
+      console.error('Ошибка загрузки отзывов:', error);
+      setReviews([]);
+    }
+  };
 
-const fetchWorkPhotos = async () => {
-  try {
-    const response = await axios.get('/api/admin/work-photos');
-    setWorkPhotos(Array.isArray(response.data) ? response.data : []);
-  } catch (error) {
-    console.error('Ошибка загрузки фото работ:', error);
-    setWorkPhotos([]);
-  }
-};
+  const fetchWorkPhotos = async () => {
+    try {
+      const response = await axios.get('/api/admin/work-photos');
+      setWorkPhotos(Array.isArray(response.data) ? response.data : []);
+    } catch (error) {
+      console.error('Ошибка загрузки фото работ:', error);
+      setWorkPhotos([]);
+    }
+  };
 
-const fetchPromotions = async () => {
-  try {
-    const response = await axios.get('/api/admin/promotions');
-    setPromotions(Array.isArray(response.data) ? response.data : []);
-  } catch (error) {
-    console.error('Ошибка загрузки акций:', error);
-    setPromotions([]);
-  }
-};
+  const fetchPromotions = async () => {
+    try {
+      const response = await axios.get('/api/admin/promotions');
+      setPromotions(Array.isArray(response.data) ? response.data : []);
+    } catch (error) {
+      console.error('Ошибка загрузки акций:', error);
+      setPromotions([]);
+    }
+  };
+
   const handleAddClick = () => {
     switch (activeTab) {
       case 'users':
@@ -186,80 +188,81 @@ const fetchPromotions = async () => {
     { id: 'workPhotos', label: 'Фото работ' },
     { id: 'promotions', label: 'Акции' }
   ];
-const getFilteredData = () => {
-  const term = searchTerm.toLowerCase();
-  let data = [];
-  
-  switch (activeTab) {
-    case 'users':
-      data = users;
-      break;
-    case 'services':
-      data = services;
-      break;
-    case 'categories':
-      data = categories;
-      break;
-    case 'masters':
-      data = masters;
-      break;
-    case 'appointments':
-      data = appointments;
-      break;
-    case 'reviews':
-      data = reviews;
-      break;
-    case 'workPhotos':
-      data = workPhotos;
-      break;
-    case 'promotions':
-      data = promotions;
-      break;
-    default:
-      data = [];
-  }
-  
-  if (!Array.isArray(data)) {
-    return [];
-  }
-  
-  if (!term) {
-    return data;
-  }
-  
-  return data.filter(item => {
+
+  const getFilteredData = () => {
+    const term = searchTerm.toLowerCase();
+    let data = [];
+    
     switch (activeTab) {
       case 'users':
-        return (item.firstName?.toLowerCase().includes(term) ||
-                item.lastName?.toLowerCase().includes(term) ||
-                item.email?.toLowerCase().includes(term));
+        data = users;
+        break;
       case 'services':
-        return (item.name?.toLowerCase().includes(term) ||
-                item.description?.toLowerCase().includes(term));
+        data = services;
+        break;
       case 'categories':
-        return item.name?.toLowerCase().includes(term);
+        data = categories;
+        break;
       case 'masters':
-        return (`${item.User?.firstName} ${item.User?.lastName}`.toLowerCase().includes(term) ||
-                item.User?.email?.toLowerCase().includes(term));
+        data = masters;
+        break;
       case 'appointments':
-        return (item.Service?.name?.toLowerCase().includes(term) ||
-                item.User?.firstName?.toLowerCase().includes(term) ||
-                item.User?.lastName?.toLowerCase().includes(term));
+        data = appointments;
+        break;
       case 'reviews':
-        return (item.text?.toLowerCase().includes(term) ||
-                item.User?.firstName?.toLowerCase().includes(term) ||
-                item.User?.lastName?.toLowerCase().includes(term));
+        data = reviews;
+        break;
       case 'workPhotos':
-        return (item.masterName?.toLowerCase().includes(term) ||
-                item.description?.toLowerCase().includes(term));
+        data = workPhotos;
+        break;
       case 'promotions':
-        return (item.title?.toLowerCase().includes(term) ||
-                item.description?.toLowerCase().includes(term));
+        data = promotions;
+        break;
       default:
-        return true;
+        data = [];
     }
-  });
-};
+    
+    if (!Array.isArray(data)) {
+      return [];
+    }
+    
+    if (!term) {
+      return data;
+    }
+    
+    return data.filter(item => {
+      switch (activeTab) {
+        case 'users':
+          return (item.firstName?.toLowerCase().includes(term) ||
+                  item.lastName?.toLowerCase().includes(term) ||
+                  item.email?.toLowerCase().includes(term));
+        case 'services':
+          return (item.name?.toLowerCase().includes(term) ||
+                  item.description?.toLowerCase().includes(term));
+        case 'categories':
+          return item.name?.toLowerCase().includes(term);
+        case 'masters':
+          return (`${item.User?.firstName} ${item.User?.lastName}`.toLowerCase().includes(term) ||
+                  item.User?.email?.toLowerCase().includes(term));
+        case 'appointments':
+          return (item.Service?.name?.toLowerCase().includes(term) ||
+                  item.User?.firstName?.toLowerCase().includes(term) ||
+                  item.User?.lastName?.toLowerCase().includes(term));
+        case 'reviews':
+          return (item.text?.toLowerCase().includes(term) ||
+                  item.User?.firstName?.toLowerCase().includes(term) ||
+                  item.User?.lastName?.toLowerCase().includes(term));
+        case 'workPhotos':
+          return (item.masterName?.toLowerCase().includes(term) ||
+                  item.description?.toLowerCase().includes(term));
+        case 'promotions':
+          return (item.title?.toLowerCase().includes(term) ||
+                  item.description?.toLowerCase().includes(term));
+        default:
+          return true;
+      }
+    });
+  };
 
   const handleRefresh = () => {
     fetchData();

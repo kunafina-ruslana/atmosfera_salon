@@ -1,3 +1,4 @@
+// CategoriesTab.js
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { FiEdit2, FiTrash2, FiSave, FiX } from 'react-icons/fi';
@@ -8,6 +9,8 @@ const CategoriesTab = ({ data, onRefresh, showMessage, modalOpen, setModalOpen }
   const [categoryModal, setCategoryModal] = useState({ open: false, editing: null });
   const [categoryForm, setCategoryForm] = useState({ name: '' });
   const [categoryPhoto, setCategoryPhoto] = useState(null);
+
+  const categoriesList = Array.isArray(data) ? data : [];
 
   useEffect(() => {
     if (modalOpen) {
@@ -69,7 +72,7 @@ const CategoriesTab = ({ data, onRefresh, showMessage, modalOpen, setModalOpen }
   return (
     <div>
       <div className={styles.grid}>
-        {data.map(category => (
+        {categoriesList.map(category => (
           <div key={category.id} className={styles.card}>
             {category.photo && (
               <div className={styles.card_image_small}>
@@ -91,7 +94,6 @@ const CategoriesTab = ({ data, onRefresh, showMessage, modalOpen, setModalOpen }
         ))}
       </div>
 
-      {/* Встроенное модальное окно */}
       {categoryModal.open && (
         <div className={styles.modal_overlay} onClick={closeCategoryModal}>
           <div className={`${styles.modal_container} ${styles.modal_small}`} onClick={(e) => e.stopPropagation()}>
@@ -115,9 +117,7 @@ const CategoriesTab = ({ data, onRefresh, showMessage, modalOpen, setModalOpen }
                   )}
                 </div>
                 <div className={styles.modal_actions}>
-                  <button type="submit" className={styles.save_btn}>
-                     Сохранить
-                  </button>
+                  <button type="submit" className={styles.save_btn}> Сохранить</button>
                   <button type="button" onClick={closeCategoryModal} className={styles.cancel_btn}>
                     <FiX /> Отмена
                   </button>

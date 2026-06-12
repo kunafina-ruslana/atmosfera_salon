@@ -1,3 +1,4 @@
+// WorkPhotosTab.js
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { FiEdit2, FiTrash2, FiSave, FiX } from 'react-icons/fi';
@@ -8,6 +9,9 @@ const WorkPhotosTab = ({ data, categories, onRefresh, showMessage, modalOpen, se
   const [workPhotoModal, setWorkPhotoModal] = useState({ open: false, editing: null });
   const [workPhotoForm, setWorkPhotoForm] = useState({ masterName: '', description: '', categoryId: '' });
   const [selectedImage, setSelectedImage] = useState(null);
+
+  const photosList = Array.isArray(data) ? data : [];
+  const categoriesList = Array.isArray(categories) ? categories : [];
 
   useEffect(() => {
     if (modalOpen) {
@@ -73,7 +77,7 @@ const WorkPhotosTab = ({ data, categories, onRefresh, showMessage, modalOpen, se
   return (
     <div>
       <div className={styles.works_grid}>
-        {data.map(photo => (
+        {photosList.map(photo => (
           <div key={photo.id} className={styles.work_photo_card}>
             <img src={`${API_URL}/uploads/works/${photo.imageUrl}`} alt={photo.description} />
             <div className={styles.work_photo_info}>
@@ -88,7 +92,6 @@ const WorkPhotosTab = ({ data, categories, onRefresh, showMessage, modalOpen, se
         ))}
       </div>
 
-      {/* Встроенное модальное окно */}
       {workPhotoModal.open && (
         <div className={styles.modal_overlay} onClick={closeWorkPhotoModal}>
           <div className={`${styles.modal_container} ${styles.modal_medium}`} onClick={(e) => e.stopPropagation()}>
@@ -110,7 +113,7 @@ const WorkPhotosTab = ({ data, categories, onRefresh, showMessage, modalOpen, se
                   <label>Категория</label>
                   <select value={workPhotoForm.categoryId} onChange={(e) => setWorkPhotoForm({ ...workPhotoForm, categoryId: e.target.value })} className={styles.select}>
                     <option value="">Выберите категорию</option>
-                    {categories.map(cat => <option key={cat.id} value={cat.id}>{cat.name}</option>)}
+                    {categoriesList.map(cat => <option key={cat.id} value={cat.id}>{cat.name}</option>)}
                   </select>
                 </div>
                 <div className={styles.form_group}>
@@ -123,9 +126,7 @@ const WorkPhotosTab = ({ data, categories, onRefresh, showMessage, modalOpen, se
                   )}
                 </div>
                 <div className={styles.modal_actions}>
-                  <button type="submit" className={styles.save_btn}>
-                     Сохранить
-                  </button>
+                  <button type="submit" className={styles.save_btn}> Сохранить</button>
                   <button type="button" onClick={closeWorkPhotoModal} className={styles.cancel_btn}>
                     <FiX /> Отмена
                   </button>

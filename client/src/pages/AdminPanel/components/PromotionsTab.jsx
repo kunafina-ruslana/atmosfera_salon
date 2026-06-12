@@ -1,3 +1,4 @@
+// PromotionsTab.js
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { FiEdit2, FiTrash2, FiSave, FiX } from 'react-icons/fi';
@@ -8,6 +9,8 @@ const PromotionsTab = ({ data, onRefresh, showMessage, modalOpen, setModalOpen }
   const [promotionModal, setPromotionModal] = useState({ open: false, editing: null });
   const [promotionForm, setPromotionForm] = useState({ title: '', description: '', discount: '', validFrom: '', validTo: '', isActive: true });
   const [selectedImage, setSelectedImage] = useState(null);
+
+  const promotionsList = Array.isArray(data) ? data : [];
 
   useEffect(() => {
     if (modalOpen) {
@@ -76,7 +79,7 @@ const PromotionsTab = ({ data, onRefresh, showMessage, modalOpen, setModalOpen }
   return (
     <div>
       <div className={styles.promotions_list}>
-        {data.map(promo => (
+        {promotionsList.map(promo => (
           <div key={promo.id} className={styles.promotion_admin_card}>
             {promo.imageUrl && (
               <img src={`${API_URL}/uploads/promotions/${promo.imageUrl}`} alt={promo.title} />
@@ -97,8 +100,10 @@ const PromotionsTab = ({ data, onRefresh, showMessage, modalOpen, setModalOpen }
           </div>
         ))}
       </div>
+      {promotionsList.length === 0 && (
+        <div className={styles.empty_state}>Нет акций</div>
+      )}
 
-      {/* Встроенное модальное окно */}
       {promotionModal.open && (
         <div className={styles.modal_overlay} onClick={closePromotionModal}>
           <div className={`${styles.modal_container} ${styles.modal_medium}`} onClick={(e) => e.stopPropagation()}>
@@ -148,9 +153,7 @@ const PromotionsTab = ({ data, onRefresh, showMessage, modalOpen, setModalOpen }
                   )}
                 </div>
                 <div className={styles.modal_actions}>
-                  <button type="submit" className={styles.save_btn}>
-                     Сохранить
-                  </button>
+                  <button type="submit" className={styles.save_btn}> Сохранить</button>
                   <button type="button" onClick={closePromotionModal} className={styles.cancel_btn}>
                     <FiX /> Отмена
                   </button>

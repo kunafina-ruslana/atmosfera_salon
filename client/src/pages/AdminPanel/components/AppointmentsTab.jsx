@@ -1,43 +1,66 @@
+// AppointmentsTab.js
 import React from 'react';
-import axios from 'axios';
-import { FiUser, FiUserCheck, FiCalendar } from 'react-icons/fi';
+import { FiClock, FiDollarSign, FiUser, FiCalendar } from 'react-icons/fi';
 import styles from '../AdminPanel.module.css';
 
+const STATUS_CONFIG = {
+  pending: { text: 'Ожидает', color: '#ffc107' },
+  confirmed: { text: 'Подтверждена', color: '#28a745' },
+  cancelled: { text: 'Отменена', color: '#dc3545' },
+  completed: { text: 'Завершена', color: '#17a2b8' }
+};
+
 const AppointmentsTab = ({ data, onRefresh, showMessage, modalOpen, setModalOpen }) => {
-  const updateAppointmentStatus = async (id, status) => {
-    try {
-      await axios.put(`/api/appointments/${id}/status`, { status });
-      onRefresh();
-      showMessage('Статус записи обновлен');
-    } catch (err) {
-      showMessage('Ошибка обновления статуса', true);
-    }
-  };
+  const appointmentsList = Array.isArray(data) ? data : [];
 
   return (
-    <div className={styles.appointments_list}>
-      {data.map(apt => (
-        <div key={apt.id} className={styles.appointment_card}>
-          <div className={styles.appointment_header}>
-            <h4>{apt.Service?.name}</h4>
-            <select 
-              value={apt.status} 
-              onChange={(e) => updateAppointmentStatus(apt.id, e.target.value)}
-              className={styles.status_select}
-            >
-              <option value="pending">Ожидает</option>
-              <option value="confirmed">Подтвержден</option>
-              <option value="cancelled">Отменен</option>
-              <option value="completed">Завершен</option>
-            </select>
-          </div>
-          <div className={styles.appointment_details}>
-            <span><FiUser /> {apt.User?.firstName} {apt.User?.lastName}</span>
-            <span><FiUserCheck /> {apt.Master?.User?.firstName} {apt.Master?.User?.lastName}</span>
-            <span><FiCalendar /> {new Date(apt.dateTime).toLocaleString()}</span>
-          </div>
-        </div>
-      ))}
+    <div>
+      <div className={styles.appointments_list}>
+        {appointmentsList.map(appointment => {
+          const appointmentDate = new Date(appointment.dateTime);
+          const status = STATUS_CONFIG[appointment.status] || { text: appointment.status, color: '#6c757d' };
+          
+          return (
+            <div key={appointment.id} className={styles.appointment_card}>
+              <div className={styles.appointment_header}>
+                <h3>{appointment.Service?.name || 'Услуга'}</h3>
+                <span className={styles.status} style={{ backgroundColor: status.color }}>
+                  {status.text}
+                </span>
+              </div>
+              <div className={styles.appointment_details}>
+                <div className={styles.detail_item}>
+                  <FiUser />
+                  <span>Клиент: {appointment.User?.firstName} {appointment.User?.lastName}</span>
+                </div>
+                <div className={styles.detail_item}>
+                  <FiUser />
+                  <span>Мастер: {appointment.Master?.User?.firstName} {appointment.Master?.User?.lastName}</span>
+                </div>
+                <div className={styles.detail_item}>
+                  <FiCalendar />
+                  <span>Дата: {appointmentDate.toLocaleDateString('ru-RU')}</span>
+                </div>
+                <div className={styles.detail_item}>
+                  <FiClock />
+                  <span>Время: {appointmentDate.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
+                </div>
+                <div className={styles.detail_item}>
+                  <FiClock />
+                  <span>Длительность: {appointment.Service?.duration} мин</span>
+                </div>
+                <div className={styles.detail_item}>
+                  <FiDollarSign />
+                  <span>Цена: {appointment.Service?.price} ₽</span>
+                </div>
+              </div>
+            </div>
+          );
+        })}
+      </div>
+      {appointmentsList.length === 0 && (
+        <div className={styles.empty_state}>Нет записей</div>
+      )}
     </div>
   );
 };

@@ -1,3 +1,4 @@
+// ServicesTab.js
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { FiEdit2, FiTrash2, FiSave, FiX, FiClock, FiDollarSign } from 'react-icons/fi';
@@ -8,6 +9,9 @@ const ServicesTab = ({ data, categories, onRefresh, showMessage, modalOpen, setM
   const [serviceModal, setServiceModal] = useState({ open: false, editing: null });
   const [serviceForm, setServiceForm] = useState({ name: '', description: '', duration: 60, price: 0, categoryId: '' });
   const [servicePhoto, setServicePhoto] = useState(null);
+
+  const servicesList = Array.isArray(data) ? data : [];
+  const categoriesList = Array.isArray(categories) ? categories : [];
 
   useEffect(() => {
     if (modalOpen) {
@@ -74,7 +78,7 @@ const ServicesTab = ({ data, categories, onRefresh, showMessage, modalOpen, setM
   return (
     <div>
       <div className={styles.grid}>
-        {data.map(service => (
+        {servicesList.map(service => (
           <div key={service.id} className={styles.card}>
             {service.photo && (
               <div className={styles.card_image}>
@@ -97,7 +101,6 @@ const ServicesTab = ({ data, categories, onRefresh, showMessage, modalOpen, setM
         ))}
       </div>
 
-      {/* Встроенное модальное окно */}
       {serviceModal.open && (
         <div className={styles.modal_overlay} onClick={closeServiceModal}>
           <div className={`${styles.modal_container} ${styles.modal_medium}`} onClick={(e) => e.stopPropagation()}>
@@ -129,7 +132,7 @@ const ServicesTab = ({ data, categories, onRefresh, showMessage, modalOpen, setM
                   <label>Категория</label>
                   <select value={serviceForm.categoryId} onChange={(e) => setServiceForm({ ...serviceForm, categoryId: e.target.value })} required className={styles.select}>
                     <option value="">Выберите категорию</option>
-                    {categories.map(cat => <option key={cat.id} value={cat.id}>{cat.name}</option>)}
+                    {categoriesList.map(cat => <option key={cat.id} value={cat.id}>{cat.name}</option>)}
                   </select>
                 </div>
                 <div className={styles.form_group}>

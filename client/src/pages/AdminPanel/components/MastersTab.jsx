@@ -1,3 +1,4 @@
+// MastersTab.js
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { FiEdit2, FiMail, FiPhone, FiUser, FiSave, FiX } from 'react-icons/fi';
@@ -10,6 +11,8 @@ const MastersTab = ({ data, onRefresh, showMessage, modalOpen, setModalOpen }) =
   const [masterCategories, setMasterCategories] = useState([]);
   const [allCategories, setAllCategories] = useState([]);
   const [previewPhoto, setPreviewPhoto] = useState(null);
+
+  const mastersList = Array.isArray(data) ? data : [];
 
   useEffect(() => {
     fetchAllCategories();
@@ -24,18 +27,20 @@ const MastersTab = ({ data, onRefresh, showMessage, modalOpen, setModalOpen }) =
   const fetchAllCategories = async () => {
     try {
       const response = await axios.get('/api/services/categories');
-      setAllCategories(response.data);
+      setAllCategories(Array.isArray(response.data) ? response.data : []);
     } catch (error) {
       console.error('Ошибка загрузки категорий:', error);
+      setAllCategories([]);
     }
   };
 
   const fetchMasterCategories = async (masterId) => {
     try {
       const response = await axios.get(`/api/schedule/masters/${masterId}/categories`);
-      setMasterCategories(response.data);
+      setMasterCategories(Array.isArray(response.data) ? response.data : []);
     } catch (error) {
       console.error('Ошибка загрузки категорий мастера:', error);
+      setMasterCategories([]);
     }
   };
 
@@ -111,7 +116,7 @@ const MastersTab = ({ data, onRefresh, showMessage, modalOpen, setModalOpen }) =
   return (
     <div>
       <div className={styles.grid}>
-        {data.map(master => (
+        {mastersList.map(master => (
           <div key={master.id} className={styles.master_card}>
             <div className={styles.master_avatar}>
               {master.photo ? (
@@ -133,7 +138,6 @@ const MastersTab = ({ data, onRefresh, showMessage, modalOpen, setModalOpen }) =
         ))}
       </div>
 
-      {/* Встроенное модальное окно */}
       {masterModal.open && (
         <div className={styles.modal_overlay} onClick={closeMasterModal}>
           <div className={`${styles.modal_container} ${styles.modal_large}`} onClick={(e) => e.stopPropagation()}>
