@@ -296,7 +296,7 @@
 .feedback_section {
   position: relative;
   min-height: 80vh;
-  background: linear-gradient(0deg, rgba(0, 0, 0, 0.2), rgba(0, 0, 0, 0.7)), url('../../../public/images/feedback-bg.jpg');
+  background: linear-gradient(0deg, rgba(0, 0, 0, 0.2), rgba(0, 0, 0, 0.7)), url('https://nord-news.ru/img/newsimages/20250919/1_d4f3d0e0330c.jpg');
   background-size: cover;
   background-position: center;
   background-attachment: fixed;

@@ -19,24 +19,10 @@ export default defineConfig({
     }
   },
   build: {
-    outDir: 'build', 
-        assetsDir: 'assets',
+    outDir: 'build',
+    assetsDir: 'assets',
     sourcemap: false,
-    minify: 'terser',
-    terserOptions: {
-      compress: {
-        drop_console: true,
-        drop_debugger: true
-      }
-    },
-    rollupOptions: {
-      output: {
-        manualChunks: {
-          'vendor-react': ['react', 'react-dom', 'react-router-dom'],
-          'vendor-ui': ['react-icons', 'recharts'],
-          'vendor-utils': ['axios', 'jspdf', 'jspdf-autotable', 'xlsx']
-        }
-      }
-    }
+    minify: 'esbuild',
+    chunkSizeWarningLimit: 2000
   }
 })
