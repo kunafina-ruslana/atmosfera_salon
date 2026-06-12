@@ -1,9 +1,7 @@
-// ServicesTab.js
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { FiEdit2, FiTrash2, FiSave, FiX, FiClock, FiDollarSign } from 'react-icons/fi';
 import styles from '../AdminPanel.module.css';
-import { API_URL } from '../../../config';
 
 const ServicesTab = ({ data, categories, onRefresh, showMessage, modalOpen, setModalOpen }) => {
   const [serviceModal, setServiceModal] = useState({ open: false, editing: null });
@@ -46,20 +44,31 @@ const ServicesTab = ({ data, categories, onRefresh, showMessage, modalOpen, setM
     e.preventDefault();
     try {
       const formData = new FormData();
-      Object.keys(serviceForm).forEach(key => formData.append(key, serviceForm[key]));
-      if (servicePhoto) formData.append('photo', servicePhoto);
+      formData.append('name', serviceForm.name);
+      formData.append('description', serviceForm.description);
+      formData.append('duration', serviceForm.duration.toString());
+      formData.append('price', serviceForm.price.toString());
+      formData.append('categoryId', serviceForm.categoryId);
+      if (servicePhoto) {
+        formData.append('photo', servicePhoto);
+      }
       
       if (serviceModal.editing) {
-        await axios.put(`/api/admin/services/${serviceModal.editing.id}`, formData);
+        await axios.put(`/api/admin/services/${serviceModal.editing.id}`, formData, {
+          headers: { 'Content-Type': 'multipart/form-data' }
+        });
         showMessage('Услуга обновлена');
       } else {
-        await axios.post('/api/admin/services', formData);
+        await axios.post('/api/admin/services', formData, {
+          headers: { 'Content-Type': 'multipart/form-data' }
+        });
         showMessage('Услуга добавлена');
       }
       onRefresh();
       closeServiceModal();
     } catch (err) {
-      showMessage('Ошибка сохранения услуги', true);
+      console.error('Error:', err);
+      showMessage(err.response?.data?.error || 'Ошибка сохранения услуги', true);
     }
   };
 
@@ -82,7 +91,7 @@ const ServicesTab = ({ data, categories, onRefresh, showMessage, modalOpen, setM
           <div key={service.id} className={styles.card}>
             {service.photo && (
               <div className={styles.card_image}>
-                <img src={`${API_URL}/uploads/services/${service.photo}`} alt={service.name} />
+                <img src={`http://localhost:5000/uploads/services/${service.photo}`} alt={service.name} />
               </div>
             )}
             <div className={styles.card_content}>
@@ -140,13 +149,17 @@ const ServicesTab = ({ data, categories, onRefresh, showMessage, modalOpen, setM
                   <input type="file" onChange={(e) => setServicePhoto(e.target.files[0])} accept="image/*" />
                   {serviceModal.editing?.photo && (
                     <div className={styles.current_photo}>
-                      <img src={`${API_URL}/uploads/services/${serviceModal.editing.photo}`} alt={serviceModal.editing.name} />
+                      <img src={`http://localhost:5000/uploads/services/${serviceModal.editing.photo}`} alt={serviceModal.editing.name} />
                     </div>
                   )}
                 </div>
                 <div className={styles.modal_actions}>
-                  <button type="submit" className={styles.save_btn}> Сохранить</button>
-                  <button type="button" onClick={closeServiceModal} className={styles.cancel_btn}><FiX /> Отмена</button>
+                  <button type="submit" className={styles.save_btn}>
+                    <FiSave /> Сохранить
+                  </button>
+                  <button type="button" onClick={closeServiceModal} className={styles.cancel_btn}>
+                    <FiX /> Отмена
+                  </button>
                 </div>
               </form>
             </div>

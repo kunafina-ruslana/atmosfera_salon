@@ -1,9 +1,7 @@
-// CategoriesTab.js
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { FiEdit2, FiTrash2, FiSave, FiX } from 'react-icons/fi';
 import styles from '../AdminPanel.module.css';
-import { API_URL } from '../../../config';
 
 const CategoriesTab = ({ data, onRefresh, showMessage, modalOpen, setModalOpen }) => {
   const [categoryModal, setCategoryModal] = useState({ open: false, editing: null });
@@ -40,20 +38,29 @@ const CategoriesTab = ({ data, onRefresh, showMessage, modalOpen, setModalOpen }
     try {
       const formData = new FormData();
       formData.append('name', categoryForm.name);
-      if (categoryPhoto) formData.append('photo', categoryPhoto);
+      if (categoryPhoto) {
+        formData.append('photo', categoryPhoto);
+      }
       
+      let response;
       if (categoryModal.editing) {
-        await axios.put(`/api/admin/categories/${categoryModal.editing.id}`, formData);
+        response = await axios.put(`/api/admin/categories/${categoryModal.editing.id}`, formData, {
+          headers: { 'Content-Type': 'multipart/form-data' }
+        });
         showMessage('Категория обновлена');
       } else {
-        await axios.post('/api/admin/categories', formData);
+        response = await axios.post('/api/admin/categories', formData, {
+          headers: { 'Content-Type': 'multipart/form-data' }
+        });
         showMessage('Категория добавлена');
       }
       
+      console.log('Response:', response.data);
       onRefresh();
       closeCategoryModal();
     } catch (err) {
-      showMessage('Ошибка сохранения категории', true);
+      console.error('Error:', err);
+      showMessage(err.response?.data?.error || 'Ошибка сохранения категории', true);
     }
   };
 
@@ -76,7 +83,7 @@ const CategoriesTab = ({ data, onRefresh, showMessage, modalOpen, setModalOpen }
           <div key={category.id} className={styles.card}>
             {category.photo && (
               <div className={styles.card_image_small}>
-                <img src={`${API_URL}/uploads/categories/${category.photo}`} alt={category.name} />
+                <img src={`http://localhost:5000/uploads/categories/${category.photo}`} alt={category.name} />
               </div>
             )}
             <div className={styles.card_content}>
@@ -112,12 +119,14 @@ const CategoriesTab = ({ data, onRefresh, showMessage, modalOpen, setModalOpen }
                   <input type="file" onChange={(e) => setCategoryPhoto(e.target.files[0])} accept="image/*" />
                   {categoryModal.editing?.photo && (
                     <div className={styles.current_photo}>
-                      <img src={`${API_URL}/uploads/categories/${categoryModal.editing.photo}`} alt={categoryModal.editing.name} />
+                      <img src={`http://localhost:5000/uploads/categories/${categoryModal.editing.photo}`} alt={categoryModal.editing.name} />
                     </div>
                   )}
                 </div>
                 <div className={styles.modal_actions}>
-                  <button type="submit" className={styles.save_btn}> Сохранить</button>
+                  <button type="submit" className={styles.save_btn}>
+                    <FiSave /> Сохранить
+                  </button>
                   <button type="button" onClick={closeCategoryModal} className={styles.cancel_btn}>
                     <FiX /> Отмена
                   </button>

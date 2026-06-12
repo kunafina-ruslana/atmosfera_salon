@@ -9,6 +9,7 @@ const __dirname = path.dirname(__filename);
 const ensureDirectoryExists = (dirPath) => {
   if (!fs.existsSync(dirPath)) {
     fs.mkdirSync(dirPath, { recursive: true });
+    console.log(`Создана директория: ${dirPath}`);
   }
 };
 
@@ -26,7 +27,9 @@ const createStorage = (subfolder = '') => {
       const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
       const ext = path.extname(file.originalname);
       const prefix = subfolder || 'general';
-      cb(null, prefix + '-' + uniqueSuffix + ext);
+      const filename = prefix + '-' + uniqueSuffix + ext;
+      console.log(`Сохранение файла: ${filename} в ${uploadPath}`);
+      cb(null, filename);
     }
   });
 };
@@ -43,30 +46,6 @@ const fileFilter = (req, file, cb) => {
   }
 };
 
-export const upload = multer({
-  storage: createStorage(),
-  limits: { fileSize: 10 * 1024 * 1024 },
-  fileFilter: fileFilter
-});
-
-export const uploadWorkPhoto = multer({
-  storage: createStorage('works'),
-  limits: { fileSize: 10 * 1024 * 1024 },
-  fileFilter: fileFilter
-});
-
-export const uploadPromotion = multer({
-  storage: createStorage('promotions'),
-  limits: { fileSize: 10 * 1024 * 1024 },
-  fileFilter: fileFilter
-});
-
-export const uploadMasterPhoto = multer({
-  storage: createStorage('masters'),
-  limits: { fileSize: 10 * 1024 * 1024 },
-  fileFilter: fileFilter
-});
-
 export const uploadCategoryPhoto = multer({
   storage: createStorage('categories'),
   limits: { fileSize: 10 * 1024 * 1024 },
@@ -80,6 +59,7 @@ export const uploadServicePhoto = multer({
 });
 
 export const handleUploadError = (err, req, res, next) => {
+  console.error('Upload error:', err);
   if (err instanceof multer.MulterError) {
     if (err.code === 'FILE_TOO_LARGE') {
       return res.status(400).json({ error: 'Файл слишком большой. Максимальный размер 10MB' });

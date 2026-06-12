@@ -59,13 +59,24 @@ export const blockUser = async (req, res) => {
 
 export const createService = async (req, res) => {
   try {
-    const serviceData = { ...req.body };
+    console.log('Request body:', req.body);
+    console.log('Request file:', req.file);
+    
+    const serviceData = { 
+      name: req.body.name,
+      description: req.body.description,
+      duration: parseInt(req.body.duration),
+      price: parseFloat(req.body.price),
+      categoryId: parseInt(req.body.categoryId)
+    };
+    
     if (req.file) {
       serviceData.photo = req.file.filename;
     }
     const service = await Service.create(serviceData);
     res.status(201).json(service);
   } catch (error) {
+    console.error('Ошибка создания услуги:', error);
     res.status(500).json({ error: error.message });
   }
 };
@@ -128,18 +139,20 @@ export const deleteService = async (req, res) => {
 
 export const createCategory = async (req, res) => {
   try {
-    const { name } = req.body;
-    const categoryData = { name };
+    console.log('Request body:', req.body);
+    console.log('Request file:', req.file);
+    
+    const categoryData = { name: req.body.name };
     if (req.file) {
       categoryData.photo = req.file.filename;
     }
     const category = await Category.create(categoryData);
     res.status(201).json(category);
   } catch (error) {
+    console.error('Ошибка создания категории:', error);
     res.status(500).json({ error: error.message });
   }
 };
-
 export const updateCategory = async (req, res) => {
   try {
     const category = await Category.findByPk(req.params.id);

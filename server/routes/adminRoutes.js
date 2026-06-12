@@ -29,8 +29,8 @@ router.put('/users/:id/role', updateUserRole);
 router.put('/users/:id/block', blockUser);
 
 router.get('/categories', getCategories);
-router.post('/categories', createCategory);
-router.put('/categories/:id', updateCategory);
+router.post('/categories', uploadCategoryPhoto.single('photo'), handleUploadError, createCategory);
+router.put('/categories/:id', uploadCategoryPhoto.single('photo'), handleUploadError, updateCategory);
 router.delete('/categories/:id', deleteCategory);
 
 router.post('/services', uploadServicePhoto.single('photo'), handleUploadError, createService);
