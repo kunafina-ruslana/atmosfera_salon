@@ -52,21 +52,7 @@ app.use(express.json({ limit: '50mb' }));
 app.use(express.urlencoded({ extended: true, limit: '50mb' }));
 app.use('/uploads', express.static(uploadsDir));
 
-app.use('/api/auth', authRoutes);
-app.use('/api/services', serviceRoutes);
-app.use('/api/masters', masterRoutes);
-app.use('/api/appointments', appointmentRoutes);
-app.use('/api/favorites', favoriteRoutes);
-app.use('/api/reviews', reviewRoutes);
-app.use('/api/admin', adminRoutes);
-app.use('/api/schedule', scheduleRoutes);
-app.use('/api/public', publicRoutes);
-app.use('/api/reports', reportRoutes);
-app.use('/api/schedule-management', scheduleManagementRoutes);
-app.use('/api/feedback', feedbackRoutes);
-app.use('/api/categories', categoryRoutes);
-
-app.get('/api/services/categories', async (req, res) => {
+app.get('/api/categories', async (req, res) => {
   try {
     const categories = await Category.findAll();
     res.json(categories);
@@ -86,18 +72,58 @@ app.get('/api/services', async (req, res) => {
   }
 });
 
-app.get('/api/admin/users', async (req, res) => {
+app.get('/api/reviews', async (req, res) => {
   try {
-    const users = await User.findAll({
-      attributes: { exclude: ['password'] }
+    const reviews = await Review.findAll({
+      include: [
+        { model: User, attributes: ['firstName', 'lastName'] },
+        { model: Master, include: [{ model: User, attributes: ['firstName', 'lastName'] }] }
+      ]
     });
-    res.json(users);
+    res.json(reviews);
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
 });
 
-app.get('/api/users', async (req, res) => {
+app.get('/api/work-photos', async (req, res) => {
+  try {
+    const worksDir = path.join(__dirname, 'uploads', 'works');
+    if (!fs.existsSync(worksDir)) {
+      return res.json([]);
+    }
+    const files = fs.readdirSync(worksDir);
+    const photos = files.filter(file => /\.(jpg|jpeg|png|gif|webp)$/i.test(file)).map(file => ({
+      id: file,
+      imageUrl: file,
+      masterName: 'Мастер',
+      description: '',
+      categoryId: null
+    }));
+    res.json(photos);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+app.get('/api/promotions', async (req, res) => {
+  try {
+    res.json([]);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+app.get('/api/services/categories', async (req, res) => {
+  try {
+    const categories = await Category.findAll();
+    res.json(categories);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+app.get('/api/admin/users', async (req, res) => {
   try {
     const users = await User.findAll({
       attributes: { exclude: ['password'] }
@@ -140,20 +166,6 @@ app.get('/api/reviews/all', async (req, res) => {
     const reviews = await Review.findAll({
       include: [
         { model: User, attributes: ['id', 'firstName', 'lastName', 'email'] },
-        { model: Master, include: [{ model: User, attributes: ['firstName', 'lastName'] }] }
-      ]
-    });
-    res.json(reviews);
-  } catch (error) {
-    res.status(500).json({ error: error.message });
-  }
-});
-
-app.get('/api/reviews', async (req, res) => {
-  try {
-    const reviews = await Review.findAll({
-      include: [
-        { model: User, attributes: ['firstName', 'lastName'] },
         { model: Master, include: [{ model: User, attributes: ['firstName', 'lastName'] }] }
       ]
     });
@@ -218,6 +230,18 @@ app.get('/api/public/work-photos', async (req, res) => {
     res.status(500).json({ error: error.message });
   }
 });
+
+app.use('/api/auth', authRoutes);
+app.use('/api/masters', masterRoutes);
+app.use('/api/appointments', appointmentRoutes);
+app.use('/api/favorites', favoriteRoutes);
+app.use('/api/admin', adminRoutes);
+app.use('/api/schedule', scheduleRoutes);
+app.use('/api/public', publicRoutes);
+app.use('/api/reports', reportRoutes);
+app.use('/api/schedule-management', scheduleManagementRoutes);
+app.use('/api/feedback', feedbackRoutes);
+app.use('/api/categories', categoryRoutes);
 
 app.get('/api/health', (req, res) => {
   res.json({ status: 'OK', message: 'Сервер работает' });
