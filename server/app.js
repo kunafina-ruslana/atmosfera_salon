@@ -118,24 +118,7 @@ app.use((err, req, res, next) => {
   res.status(500).json({ error: err.message });
 });
 
-const startServer = async () => {
-  const isConnected = await testConnection();
-
-  if (!isConnected) {
-    console.error('Невозможно запустить сервер без подключения к базе данных');
-    process.exit(1);
-  }
-
-  try {
-    await sequelize.sync({ alter: true });
-    console.log('Синхронизация моделей завершена');
-
-    const PORT = process.env.PORT || 5000;
-    const server = app.listen(PORT, '0.0.0.0', () => {
-      console.log('\nСервер запущен\n');
-    });
-
-    const createTestAdmin = async () => {
+const createTestAdmin = async () => {
       try {
         const adminExists = await User.findOne({
           where: { role: 'admin' }
@@ -170,7 +153,26 @@ const startServer = async () => {
         return null;
       }
     }
+  
 
+const startServer = async () => {
+  const isConnected = await testConnection();
+
+  if (!isConnected) {
+    console.error('Невозможно запустить сервер без подключения к базе данных');
+    process.exit(1);
+  }
+
+  try {
+    await sequelize.sync({ alter: true });
+    console.log('Синхронизация моделей завершена');
+
+await createTestAdmin();
+
+    const PORT = process.env.PORT || 5000;
+    const server = app.listen(PORT, '0.0.0.0', () => {
+      console.log('\nСервер запущен\n');
+    });
 
     server.timeout = 120000;
     server.keepAliveTimeout = 120000;
