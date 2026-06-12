@@ -1,7 +1,6 @@
 import React, { createContext, useState, useContext, useEffect } from 'react';
 import axios from 'axios';
-
-const API_URL = 'https://atmosfera-salon-beauty-api.onrender.com/api';
+import { API_URL } from '../config';
 
 const AuthContext = createContext();
 
@@ -23,7 +22,7 @@ export const AuthProvider = ({ children }) => {
 
   const fetchUser = async () => {
     try {
-      const response = await axios.get(`${API_URL}/auth/me`);
+      const response = await axios.get(`${API_URL}/api/auth/me`);
       setUser(response.data);
     } catch (error) {
       console.error('Ошибка загрузки пользователя:', error);
@@ -34,7 +33,7 @@ export const AuthProvider = ({ children }) => {
   };
 
   const login = async (email, password) => {
-    const response = await axios.post(`${API_URL}/auth/login`, { email, password });
+    const response = await axios.post(`${API_URL}/api/auth/login`, { email, password });
     const { token: newToken, user: userData } = response.data;
     localStorage.setItem('token', newToken);
     axios.defaults.headers.common['Authorization'] = `Bearer ${newToken}`;
@@ -44,7 +43,7 @@ export const AuthProvider = ({ children }) => {
   };
 
   const register = async (userData) => {
-    const response = await axios.post(`${API_URL}/auth/register`, userData);
+    const response = await axios.post(`${API_URL}/api/auth/register`, userData);
     const { token: newToken, user: newUser } = response.data;
     localStorage.setItem('token', newToken);
     axios.defaults.headers.common['Authorization'] = `Bearer ${newToken}`;
@@ -61,7 +60,7 @@ export const AuthProvider = ({ children }) => {
   };
 
   const updateProfile = async (data) => {
-    const response = await axios.put(`${API_URL}/auth/me`, data);
+    const response = await axios.put(`${API_URL}/api/auth/me`, data);
     setUser(response.data);
     return response.data;
   };
