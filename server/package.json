@@ -12,5 +12,19 @@
     "pg-hstore": "^2.3.4",
     "sequelize": "^6.37.8",
     "xlsx": "^0.18.5"
-  }
+  },
+  "name": "server",
+  "version": "1.0.0",
+  "main": "app.js",
+  "devDependencies": {},
+  "scripts": {
+    "start": "node app.js",
+    "dev": "nodemon app.js",
+    "build": "npm install",
+    "seed": "node seed.js"
+  },
+  "keywords": [],
+  "author": "Kunafina Ruslana",
+  "license": "ISC",
+  "description": ""
 }

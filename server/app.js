@@ -90,9 +90,7 @@ const startServer = async () => {
     await sequelize.sync({ alter: true });
     console.log('Синхронизация моделей завершена');
     
-    
-    
-    const PORT = process.env.PORT || 5000;
+        const PORT = process.env.PORT || 5000;
     const server = app.listen(PORT, '0.0.0.0', () => {
       console.log('\nСервер запущен\n');
     });
