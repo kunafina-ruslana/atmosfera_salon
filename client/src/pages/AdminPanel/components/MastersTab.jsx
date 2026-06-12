@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { FiEdit2, FiMail, FiPhone, FiUser, FiSave, FiX } from 'react-icons/fi';
 import styles from '../AdminPanel.module.css';
+import { API_URL } from '../../../config';
 
 const MastersTab = ({ data, onRefresh, showMessage, modalOpen, setModalOpen }) => {
   const [masterModal, setMasterModal] = useState({ open: false, editing: null });
@@ -41,7 +42,7 @@ const MastersTab = ({ data, onRefresh, showMessage, modalOpen, setModalOpen }) =
   const openMasterModal = async (master = null) => {
     if (master) {
       setMasterForm({ bio: master.bio || '', photo: null });
-      setPreviewPhoto(master.photo ? `http://localhost:5000/uploads/masters/${master.photo}` : null);
+      setPreviewPhoto(master.photo ? `${API_URL}/uploads/masters/${master.photo}` : null);
       await fetchMasterCategories(master.id);
       setMasterModal({ open: true, editing: master });
     } else {
@@ -114,7 +115,7 @@ const MastersTab = ({ data, onRefresh, showMessage, modalOpen, setModalOpen }) =
           <div key={master.id} className={styles.master_card}>
             <div className={styles.master_avatar}>
               {master.photo ? (
-                <img src={`http://localhost:5000/uploads/masters/${master.photo}`} alt={master.User?.firstName || 'Мастер'} />
+                <img src={`${API_URL}/uploads/masters/${master.photo}`} alt={master.User?.firstName || 'Мастер'} />
               ) : (
                 <div className={styles.avatar_placeholder}><FiUser /></div>
               )}

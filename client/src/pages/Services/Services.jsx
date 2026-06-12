@@ -3,6 +3,7 @@ import { Link, useSearchParams } from 'react-router-dom';
 import axios from 'axios';
 import { FiSearch, FiFilter, FiX, FiClock, FiDollarSign } from 'react-icons/fi';
 import styles from './Services.module.css';
+import { API_URL } from '../../config';
 
 const Services = () => {
   const [services, setServices] = useState([]);
@@ -163,7 +164,7 @@ const Services = () => {
             <div key={service.id} className={styles.service_card}>
               {service.photo && (
                 <div className={styles.image_wrapper}>
-                  <img src={`http://localhost:5000/uploads/services/${service.photo}`} alt={service.name} />
+                  <img src={`${API_URL}/uploads/services/${service.photo}`} alt={service.name} />
                 </div>
               )}
               <div className={styles.service_content}>

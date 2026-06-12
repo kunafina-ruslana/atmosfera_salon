@@ -7,6 +7,7 @@ import {
   FiUser, FiCalendar, FiTag, FiArrowLeft, FiArrowRight, FiCheckCircle 
 } from 'react-icons/fi';
 import styles from './Booking.module.css';
+import { API_URL } from '../../config';
 
 const Booking = () => {
   const location = useLocation();
@@ -168,7 +169,7 @@ const Booking = () => {
                 {service.photo && (
                   <div className={styles.service_image_wrapper}>
                     <img
-                      src={`http://localhost:5000/uploads/${service.photo}`}
+                      src={`${API_URL}/uploads/${service.photo}`}
                       alt={service.name}
                       className={styles.service_image}
                     />
@@ -230,7 +231,7 @@ const Booking = () => {
                   <div className={styles.master_avatar}>
                     {master.photo ? (
                       <img
-                        src={`http://localhost:5000/uploads/${master.photo}`}
+                        src={`${API_URL}/uploads/${master.photo}`}
                         alt={master.User.firstName}
                       />
                     ) : (

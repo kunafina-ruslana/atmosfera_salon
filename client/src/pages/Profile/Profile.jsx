@@ -16,6 +16,7 @@ import {
 } from 'react-icons/fi';
 
 import styles from './Profile.module.css';
+import { API_URL } from '../../config';
 
 const STATUS_CONFIG = {
   pending: {
@@ -53,7 +54,7 @@ const FavoriteCard = memo(({ favorite, onRemove }) => {
       {service?.photo && (
         <div className={styles.image_wrapper}>
           <img
-            src={`http://localhost:5000/uploads/${service.photo}`}
+            src={`${API_URL}/uploads/${service.photo}`}
             alt={service.name}
           />
         </div>

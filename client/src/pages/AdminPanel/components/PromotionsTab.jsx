@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { FiEdit2, FiTrash2, FiSave, FiX } from 'react-icons/fi';
 import styles from '../AdminPanel.module.css';
+import { API_URL } from '../../../config';
 
 const PromotionsTab = ({ data, onRefresh, showMessage, modalOpen, setModalOpen }) => {
   const [promotionModal, setPromotionModal] = useState({ open: false, editing: null });
@@ -78,7 +79,7 @@ const PromotionsTab = ({ data, onRefresh, showMessage, modalOpen, setModalOpen }
         {data.map(promo => (
           <div key={promo.id} className={styles.promotion_admin_card}>
             {promo.imageUrl && (
-              <img src={`http://localhost:5000/uploads/promotions/${promo.imageUrl}`} alt={promo.title} />
+              <img src={`${API_URL}/uploads/promotions/${promo.imageUrl}`} alt={promo.title} />
             )}
             <div className={styles.promotion_admin_info}>
               <h3>{promo.title}</h3>
@@ -142,7 +143,7 @@ const PromotionsTab = ({ data, onRefresh, showMessage, modalOpen, setModalOpen }
                   <input type="file" onChange={(e) => setSelectedImage(e.target.files[0])} accept="image/*" />
                   {promotionModal.editing?.imageUrl && (
                     <div className={styles.current_photo}>
-                      <img src={`http://localhost:5000/uploads/promotions/${promotionModal.editing.imageUrl}`} alt={promotionModal.editing.title} />
+                      <img src={`${API_URL}/uploads/promotions/${promotionModal.editing.imageUrl}`} alt={promotionModal.editing.title} />
                     </div>
                   )}
                 </div>

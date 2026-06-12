@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { FiEdit2, FiTrash2, FiSave, FiX } from 'react-icons/fi';
 import styles from '../AdminPanel.module.css';
+import { API_URL } from '../../../config';
 
 const WorkPhotosTab = ({ data, categories, onRefresh, showMessage, modalOpen, setModalOpen }) => {
   const [workPhotoModal, setWorkPhotoModal] = useState({ open: false, editing: null });
@@ -74,7 +75,7 @@ const WorkPhotosTab = ({ data, categories, onRefresh, showMessage, modalOpen, se
       <div className={styles.works_grid}>
         {data.map(photo => (
           <div key={photo.id} className={styles.work_photo_card}>
-            <img src={`http://localhost:5000/uploads/works/${photo.imageUrl}`} alt={photo.description} />
+            <img src={`${API_URL}/uploads/works/${photo.imageUrl}`} alt={photo.description} />
             <div className={styles.work_photo_info}>
               <p><strong>{photo.masterName}</strong></p>
               <p>{photo.description}</p>
@@ -117,7 +118,7 @@ const WorkPhotosTab = ({ data, categories, onRefresh, showMessage, modalOpen, se
                   <input type="file" onChange={(e) => setSelectedImage(e.target.files[0])} accept="image/*" required={!workPhotoModal.editing} />
                   {workPhotoModal.editing?.imageUrl && (
                     <div className={styles.current_photo}>
-                      <img src={`http://localhost:5000/uploads/works/${workPhotoModal.editing.imageUrl}`} alt="Work" />
+                      <img src={`${API_URL}/uploads/works/${workPhotoModal.editing.imageUrl}`} alt="Work" />
                     </div>
                   )}
                 </div>

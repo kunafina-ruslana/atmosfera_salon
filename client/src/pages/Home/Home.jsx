@@ -8,6 +8,7 @@ import {
   FiX, FiPercent, FiCalendar, FiStar, FiFilter
 } from 'react-icons/fi';
 import styles from './Home.module.css';
+import { API_URL } from '../../config';
 
 const Home = () => {
   const [categories, setCategories] = useState([]);
@@ -250,7 +251,7 @@ const Home = () => {
                     <div className={styles.category_card} onClick={() => handleCategoryClick(category.id)}>
                       <div className={styles.category_image}>
                         {category.photo ? (
-                          <img src={`http://localhost:5000/uploads/categories/${category.photo}`} alt={category.name} />
+                          <img src={`${API_URL}/uploads/categories/${category.photo}`} alt={category.name} />
                         ) : (
                           <div className={styles.category_image_placeholder}><FiScissors /></div>
                         )}
@@ -312,7 +313,7 @@ const Home = () => {
                 {worksPhotos.map((photo, index) => (
                   <div key={index} className={styles.work_card} onClick={() => setSelectedPhoto(photo)}>
                     <div className={styles.work_image}>
-                      <img src={`http://localhost:5000/uploads/works/${photo.imageUrl}`} alt={photo.description || 'Работа мастера'} />
+                      <img src={`${API_URL}/uploads/works/${photo.imageUrl}`} alt={photo.description || 'Работа мастера'} />
                     </div>
                     <div className={styles.work_content}>
                       <p className={styles.work_master}><FiUser /> Мастер: {photo.masterName}</p>
@@ -364,7 +365,7 @@ const Home = () => {
                       <div className={styles.promotion_card}>
                         {promo.imageUrl && (
                           <div className={styles.promotion_image}>
-                            <img src={`http://localhost:5000/uploads/promotions/${promo.imageUrl}`} alt={promo.title} />
+                            <img src={`${API_URL}/uploads/promotions/${promo.imageUrl}`} alt={promo.title} />
                           </div>
                         )}
                         <div className={styles.promotion_content}>
@@ -488,7 +489,7 @@ const Home = () => {
         <div className={styles.photo_modal} onClick={() => setSelectedPhoto(null)}>
           <div className={styles.photo_modal_content} onClick={(e) => e.stopPropagation()}>
             <button className={styles.photo_modal_close} onClick={() => setSelectedPhoto(null)}><FiX /></button>
-            <img src={`http://localhost:5000/uploads/works/${selectedPhoto.imageUrl}`} alt={selectedPhoto.description} />
+            <img src={`${API_URL}/uploads/works/${selectedPhoto.imageUrl}`} alt={selectedPhoto.description} />
             <div className={styles.photo_modal_info}>
               <p><FiUser /> Мастер: {selectedPhoto.masterName}</p>
               <p>{selectedPhoto.description}</p>

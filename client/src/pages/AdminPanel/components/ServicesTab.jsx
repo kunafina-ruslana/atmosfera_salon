@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { FiEdit2, FiTrash2, FiSave, FiX, FiClock, FiDollarSign } from 'react-icons/fi';
 import styles from '../AdminPanel.module.css';
+import { API_URL } from '../../../config';
 
 const ServicesTab = ({ data, categories, onRefresh, showMessage, modalOpen, setModalOpen }) => {
   const [serviceModal, setServiceModal] = useState({ open: false, editing: null });
@@ -77,7 +78,7 @@ const ServicesTab = ({ data, categories, onRefresh, showMessage, modalOpen, setM
           <div key={service.id} className={styles.card}>
             {service.photo && (
               <div className={styles.card_image}>
-                <img src={`http://localhost:5000/uploads/services/${service.photo}`} alt={service.name} />
+                <img src={`${API_URL}/uploads/services/${service.photo}`} alt={service.name} />
               </div>
             )}
             <div className={styles.card_content}>
@@ -136,7 +137,7 @@ const ServicesTab = ({ data, categories, onRefresh, showMessage, modalOpen, setM
                   <input type="file" onChange={(e) => setServicePhoto(e.target.files[0])} accept="image/*" />
                   {serviceModal.editing?.photo && (
                     <div className={styles.current_photo}>
-                      <img src={`http://localhost:5000/uploads/services/${serviceModal.editing.photo}`} alt={serviceModal.editing.name} />
+                      <img src={`${API_URL}/uploads/services/${serviceModal.editing.photo}`} alt={serviceModal.editing.name} />
                     </div>
                   )}
                 </div>

@@ -7,6 +7,7 @@ import {
 import { Link } from 'react-router-dom';
 import styles from './About.module.css';
 import { useTheme } from '../../contexts/ThemeContext';
+import { API_URL } from '../../config';
 
 const About = () => {
   const [masters, setMasters] = useState([]);
@@ -86,7 +87,7 @@ const About = () => {
                 <div className={styles.masterImage}>
                   {master.photo ? (
                     <img 
-                      src={`http://localhost:5000/uploads/${master.photo}`} 
+                      src={`${API_URL}/uploads/${master.photo}`} 
                       alt={master.User.firstName}
                     />
                   ) : (
@@ -178,7 +179,7 @@ const About = () => {
               
               <div className={styles.contactItem}>
                 <FiMapPin />
-                <div>Ы
+                <div>
                   <div className={styles.contactLabel}>Адрес</div>
                   <div className={styles.contactValue}>г. Оренбург, пер. Южный, 35, 1 этаж</div>
                 </div>

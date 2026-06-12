@@ -4,6 +4,7 @@ import axios from 'axios';
 import { useAuth } from '../../contexts/AuthContext';
 import { FiHeart, FiClock, FiDollarSign, FiTag, FiUser, FiCalendar, FiStar, FiArrowLeft } from 'react-icons/fi';
 import styles from './ServiceDetails.module.css';
+import { API_URL } from '../../config';
 
 const ServiceDetails = () => {
   const { id } = useParams();
@@ -98,7 +99,7 @@ const ServiceDetails = () => {
         {service.photo && (
           <div className={styles.imageWrapper}>
             <img
-              src={`http://localhost:5000/uploads/services/${service.photo}`}
+              src={`${API_URL}/uploads/services/${service.photo}`}
               alt={service.name}
               className={styles.serviceImage}
             />

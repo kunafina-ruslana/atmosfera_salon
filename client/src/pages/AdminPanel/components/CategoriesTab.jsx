@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { FiEdit2, FiTrash2, FiSave, FiX } from 'react-icons/fi';
 import styles from '../AdminPanel.module.css';
+import { API_URL } from '../../../config';
 
 const CategoriesTab = ({ data, onRefresh, showMessage, modalOpen, setModalOpen }) => {
   const [categoryModal, setCategoryModal] = useState({ open: false, editing: null });
@@ -72,7 +73,7 @@ const CategoriesTab = ({ data, onRefresh, showMessage, modalOpen, setModalOpen }
           <div key={category.id} className={styles.card}>
             {category.photo && (
               <div className={styles.card_image_small}>
-                <img src={`http://localhost:5000/uploads/categories/${category.photo}`} alt={category.name} />
+                <img src={`${API_URL}/uploads/categories/${category.photo}`} alt={category.name} />
               </div>
             )}
             <div className={styles.card_content}>
@@ -109,7 +110,7 @@ const CategoriesTab = ({ data, onRefresh, showMessage, modalOpen, setModalOpen }
                   <input type="file" onChange={(e) => setCategoryPhoto(e.target.files[0])} accept="image/*" />
                   {categoryModal.editing?.photo && (
                     <div className={styles.current_photo}>
-                      <img src={`http://localhost:5000/uploads/categories/${categoryModal.editing.photo}`} alt={categoryModal.editing.name} />
+                      <img src={`${API_URL}/uploads/categories/${categoryModal.editing.photo}`} alt={categoryModal.editing.name} />
                     </div>
                   )}
                 </div>
