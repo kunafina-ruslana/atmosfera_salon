@@ -1,5 +1,4 @@
 import { Review, User, Master } from '../models/index.js';
-import { upload } from '../middleware/upload.js';
 
 export const createReview = async (req, res) => {
   try {

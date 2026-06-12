@@ -71,3 +71,9 @@ export const handleUploadError = (err, req, res, next) => {
   }
   next();
 };
+
+export const upload = multer({
+  storage: createStorage(),
+  limits: { fileSize: 10 * 1024 * 1024 },
+  fileFilter: fileFilter
+});
