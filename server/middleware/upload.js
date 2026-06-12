@@ -1,9 +1,16 @@
 import multer from 'multer';
 import path from 'path';
 import { fileURLToPath } from 'url';
+import fs from 'fs';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
+
+const ensureDirectoryExists = (dirPath) => {
+  if (!fs.existsSync(dirPath)) {
+    fs.mkdirSync(dirPath, { recursive: true });
+  }
+};
 
 const createStorage = (subfolder = '') => {
   return multer.diskStorage({
@@ -12,6 +19,7 @@ const createStorage = (subfolder = '') => {
       if (subfolder) {
         uploadPath = path.join(__dirname, '../uploads/', subfolder);
       }
+      ensureDirectoryExists(uploadPath);
       cb(null, uploadPath);
     },
     filename: function (req, file, cb) {

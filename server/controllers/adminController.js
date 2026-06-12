@@ -210,16 +210,21 @@ export const updateMaster = async (req, res) => {
     
     const updateData = { bio: req.body.bio };
     
+    console.log('req.file:', req.file); // Для отладки
+    
     if (req.file) {
+      // Удаляем старое фото
       if (master.photo) {
         const oldPhotoPath = path.join(process.cwd(), 'uploads', 'masters', master.photo);
         try {
           await fs.unlink(oldPhotoPath);
+          console.log('Старое фото удалено:', oldPhotoPath);
         } catch (err) {
-          console.error('Не удалось удалить старое фото мастера:', err.message);
+          console.error('Не удалось удалить старое фото:', err.message);
         }
       }
       updateData.photo = req.file.filename;
+      console.log('Новое фото сохранено:', updateData.photo);
     }
     
     await master.update(updateData);

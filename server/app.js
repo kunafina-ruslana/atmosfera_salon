@@ -39,6 +39,20 @@ dotenv.config();
 const app = express();
 
 const uploadsDir = path.join(__dirname, 'uploads');
+const mastersDir = path.join(__dirname, 'uploads', 'masters');
+const categoriesDir = path.join(__dirname, 'uploads', 'categories');
+const servicesDir = path.join(__dirname, 'uploads', 'services');
+const worksDir = path.join(__dirname, 'uploads', 'works');
+const promotionsDir = path.join(__dirname, 'uploads', 'promotions');
+
+const dirs = [uploadsDir, mastersDir, categoriesDir, servicesDir, worksDir, promotionsDir];
+
+dirs.forEach(dir => {
+  if (!fs.existsSync(dir)) {
+    fs.mkdirSync(dir, { recursive: true });
+    console.log(`Создана директория: ${dir}`);
+  }
+});
 
 app.use(cors({
   origin: [
