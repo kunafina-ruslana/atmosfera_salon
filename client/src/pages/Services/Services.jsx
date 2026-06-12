@@ -33,9 +33,10 @@ const Services = () => {
       if (filters.maxPrice) params.append('maxPrice', filters.maxPrice);
       
       const response = await axios.get(`/api/services?${params.toString()}`);
-      setServices(response.data);
+      setServices(Array.isArray(response.data) ? response.data : []);
     } catch (error) {
       console.error('Ошибка загрузки услуг:', error);
+      setServices([]);
     } finally {
       setLoading(false);
     }
@@ -44,11 +45,13 @@ const Services = () => {
   const fetchCategories = async () => {
     try {
       const response = await axios.get('/api/services/categories');
-      setCategories(response.data);
+      setCategories(Array.isArray(response.data) ? response.data : []);
     } catch (error) {
       console.error('Ошибка загрузки категорий:', error);
+      setCategories([]);
     }
   };
+
   const handleFilterChange = (e) => {
     const newFilters = { ...filters, [e.target.name]: e.target.value };
     setFilters(newFilters);
@@ -60,12 +63,15 @@ const Services = () => {
       }
     }
   };
+
   const clearFilters = () => {
-    setFilters({ categoryId: '', search: '', minPrice: '', maxPrice: ''    });
+    setFilters({ categoryId: '', search: '', minPrice: '', maxPrice: '' });
     setSearchParams({});
   };
 
   const hasActiveFilters = filters.categoryId || filters.search || filters.minPrice || filters.maxPrice;
+  const categoriesList = Array.isArray(categories) ? categories : [];
+  const servicesList = Array.isArray(services) ? services : [];
 
   if (loading) return (
     <div className={styles.container}>
@@ -88,7 +94,7 @@ const Services = () => {
               <label>Категория</label>
               <select name="categoryId" value={filters.categoryId} onChange={handleFilterChange}>
                 <option value="">Все категории</option>
-                {categories.map(cat => <option key={cat.id} value={cat.id}>{cat.name}</option>)}
+                {categoriesList.map(cat => <option key={cat.id} value={cat.id}>{cat.name}</option>)}
               </select>
             </div>
             <div className={styles.filter_group}>
@@ -125,7 +131,7 @@ const Services = () => {
                   <label>Категория</label>
                   <select name="categoryId" value={filters.categoryId} onChange={handleFilterChange}>
                     <option value="">Все категории</option>
-                    {categories.map(cat => <option key={cat.id} value={cat.id}>{cat.name}</option>)}
+                    {categoriesList.map(cat => <option key={cat.id} value={cat.id}>{cat.name}</option>)}
                   </select>
                 </div>
                 <div className={styles.filter_group}>
@@ -153,14 +159,14 @@ const Services = () => {
         )}
       </div>
 
-      {services.length === 0 ? (
+      {servicesList.length === 0 ? (
         <div className={styles.empty_state}>
           <p>Услуги не найдены</p>
           <button onClick={clearFilters} className={styles.reset_btn}>Сбросить фильтры</button>
         </div>
       ) : (
         <div className={styles.grid}>
-          {services.map(service => (
+          {servicesList.map(service => (
             <div key={service.id} className={styles.service_card}>
               {service.photo && (
                 <div className={styles.image_wrapper}>
@@ -169,7 +175,7 @@ const Services = () => {
               )}
               <div className={styles.service_content}>
                 <h3>{service.name}</h3>
-                <p className={styles.description}>{service.description.substring(0, 80)}...</p>
+                <p className={styles.description}>{service.description?.substring(0, 80)}...</p>
                 <div className={styles.service_info}>
                   <span><FiClock /> {service.duration} мин</span>
                   <span><FiDollarSign /> {service.price} ₽</span>
