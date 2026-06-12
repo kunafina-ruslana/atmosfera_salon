@@ -1,7 +1,7 @@
 import React, { createContext, useState, useContext, useEffect } from 'react';
 import axios from 'axios';
 
-const API_URL = 'http://localhost:5000/api';
+const API_URL = 'https://atmosfera-salon-beauty-api.onrender.com/api';
 
 const AuthContext = createContext();
 

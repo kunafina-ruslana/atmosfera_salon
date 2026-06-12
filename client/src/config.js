@@ -1,2 +1,2 @@
 export const API_URL = process.env.NODE_ENV === 'production' 
-  ? ''  : 'http://localhost:5000';
+  ? 'https://atmosfera-salon-beauty-api.onrender.com'  : 'http://localhost:5000';
