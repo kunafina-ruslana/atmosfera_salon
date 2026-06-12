@@ -86,12 +86,50 @@ app.get('/api/services', async (req, res) => {
   }
 });
 
+app.get('/api/admin/users', async (req, res) => {
+  try {
+    const users = await User.findAll({
+      attributes: { exclude: ['password'] }
+    });
+    res.json(users);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
 app.get('/api/users', async (req, res) => {
   try {
     const users = await User.findAll({
       attributes: { exclude: ['password'] }
     });
     res.json(users);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+app.get('/api/admin/masters', async (req, res) => {
+  try {
+    const masters = await Master.findAll({
+      include: [{ model: User, attributes: ['firstName', 'lastName', 'email', 'phone'] }]
+    });
+    res.json(masters);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+app.get('/api/admin/appointments', async (req, res) => {
+  try {
+    const appointments = await Appointment.findAll({
+      include: [
+        { model: User, attributes: ['firstName', 'lastName', 'email'] },
+        { model: Service },
+        { model: Master, include: [{ model: User, attributes: ['firstName', 'lastName'] }] }
+      ],
+      order: [['dateTime', 'DESC']]
+    });
+    res.json(appointments);
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
@@ -106,6 +144,56 @@ app.get('/api/reviews/all', async (req, res) => {
       ]
     });
     res.json(reviews);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+app.get('/api/reviews', async (req, res) => {
+  try {
+    const reviews = await Review.findAll({
+      include: [
+        { model: User, attributes: ['firstName', 'lastName'] },
+        { model: Master, include: [{ model: User, attributes: ['firstName', 'lastName'] }] }
+      ]
+    });
+    res.json(reviews);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+app.get('/api/admin/work-photos', async (req, res) => {
+  try {
+    const worksDir = path.join(__dirname, 'uploads', 'works');
+    if (!fs.existsSync(worksDir)) {
+      return res.json([]);
+    }
+    const files = fs.readdirSync(worksDir);
+    const photos = files.filter(file => /\.(jpg|jpeg|png|gif|webp)$/i.test(file)).map((file, index) => ({
+      id: index + 1,
+      imageUrl: file,
+      masterName: 'Мастер',
+      description: '',
+      categoryId: null
+    }));
+    res.json(photos);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+app.get('/api/admin/promotions', async (req, res) => {
+  try {
+    res.json([]);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+app.get('/api/public/promotions', async (req, res) => {
+  try {
+    res.json([]);
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
@@ -126,14 +214,6 @@ app.get('/api/public/work-photos', async (req, res) => {
       categoryId: null
     }));
     res.json(photos);
-  } catch (error) {
-    res.status(500).json({ error: error.message });
-  }
-});
-
-app.get('/api/public/promotions', async (req, res) => {
-  try {
-    res.json([]);
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
