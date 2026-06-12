@@ -17,7 +17,7 @@ import publicRoutes from './routes/publicRoutes.js';
 import reportRoutes from './routes/reportRoutes.js';
 import scheduleManagementRoutes from './routes/scheduleManagementRoutes.js';
 import feedbackRoutes from './routes/feedbackRoutes.js';
-import categoryRoutes from './routes/categoryRoutes.js'; 
+import categoryRoutes from './routes/categoryRoutes.js';
 import {
   User,
   Category,
@@ -120,24 +120,61 @@ app.use((err, req, res, next) => {
 
 const startServer = async () => {
   const isConnected = await testConnection();
-  
+
   if (!isConnected) {
     console.error('Невозможно запустить сервер без подключения к базе данных');
     process.exit(1);
   }
-  
+
   try {
     await sequelize.sync({ alter: true });
     console.log('Синхронизация моделей завершена');
-    
+
     const PORT = process.env.PORT || 5000;
     const server = app.listen(PORT, '0.0.0.0', () => {
       console.log('\nСервер запущен\n');
     });
-    
+
+    const createTestAdmin = async () => {
+      try {
+        const adminExists = await User.findOne({
+          where: { role: 'admin' }
+        });
+
+        if (!adminExists) {
+          console.log('Создание тестовой учетной записи администратора');
+
+          const testAdmin = await User.create({
+            email: 'admin@salon.com',
+            password: 'RtyFghVbn4884$**$',
+            firstName: 'Админ',
+            lastName: 'Системный',
+            birthDate: '1990-01-01',
+            phone: '+7 (999) 999-99-99',
+            role: 'admin'
+          });
+
+          console.log('Тестовый администратор успешно создан');
+
+          return testAdmin;
+        } else {
+          console.log('Администратор уже существует. Пропускаем создание.');
+          return adminExists;
+        }
+      } catch (error) {
+        if (error.name === 'SequelizeUniqueConstraintError') {
+          console.log('Администратор уже существует');
+        } else {
+          console.error('Ошибка при создании администратора:', error.message);
+        }
+        return null;
+      }
+    }
+
+
     server.timeout = 120000;
     server.keepAliveTimeout = 120000;
-    
+
   } catch (error) {
     console.error('Ошибка синхронизации базы данных:', error.message);
     process.exit(1);
