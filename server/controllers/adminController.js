@@ -139,6 +139,20 @@ export const createCategory = async (req, res) => {
   }
 };
 
+export const createCategory = async (req, res) => {
+  try {
+    const { name } = req.body;
+    const categoryData = { name };
+    if (req.file) {
+      categoryData.photo = req.file.filename;
+    }
+    const category = await Category.create(categoryData);
+    res.status(201).json(category);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
+
 export const updateCategory = async (req, res) => {
   try {
     const category = await Category.findByPk(req.params.id);
@@ -146,7 +160,8 @@ export const updateCategory = async (req, res) => {
       return res.status(404).json({ error: 'Категория не найдена' });
     }
     
-    const updateData = { name: req.body.name };
+    const { name } = req.body;
+    const updateData = { name };
     
     if (req.file) {
       if (category.photo) {
@@ -477,6 +492,14 @@ export const deletePromotion = async (req, res) => {
     
     await promotion.destroy();
     res.status(204).send();
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
+export const getCategories = async (req, res) => {
+  try {
+    const categories = await Category.findAll();
+    res.json(categories);
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
