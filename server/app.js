@@ -4,6 +4,7 @@ import dotenv from 'dotenv';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import fs from 'fs';
+import bcrypt from 'bcrypt';
 import sequelize, { testConnection } from './config/database.js';
 import authRoutes from './routes/authRoutes.js';
 import serviceRoutes from './routes/serviceRoutes.js';
@@ -38,8 +39,6 @@ dotenv.config();
 const app = express();
 
 const uploadsDir = path.join(__dirname, 'uploads');
-const worksDir = path.join(__dirname, 'uploads', 'works');
-const promotionsDir = path.join(__dirname, 'uploads', 'promotions');
 
 app.use(cors({
   origin: [
@@ -65,7 +64,7 @@ app.use('/api/public', publicRoutes);
 app.use('/api/reports', reportRoutes);
 app.use('/api/schedule-management', scheduleManagementRoutes);
 app.use('/api/feedback', feedbackRoutes);
-app.use('/api/categories', categoryRoutes); // Добавьте эту строку для категорий
+app.use('/api/categories', categoryRoutes);
 
 app.get('/api/services/categories', async (req, res) => {
   try {
@@ -118,42 +117,36 @@ app.use((err, req, res, next) => {
   res.status(500).json({ error: err.message });
 });
 
+const hashPassword = async (password) => {
+  const saltRounds = 10;
+  return await bcrypt.hash(password, saltRounds);
+};
+
 const createTestAdmin = async () => {
-      try {
-        const adminExists = await User.findOne({
-          where: { role: 'admin' }
-        });
+  try {
+    const adminExists = await User.findOne({
+      where: { role: 'admin' }
+    });
 
-        if (!adminExists) {
-          console.log('Создание тестовой учетной записи администратора');
-
-          const testAdmin = await User.create({
-            email: 'admin@salon.com',
-            password: 'RtyFghVbn4884$**$',
-            firstName: 'Админ',
-            lastName: 'Системный',
-            birthDate: '1990-01-01',
-            phone: '+7 (999) 999-99-99',
-            role: 'admin'
-          });
-
-          console.log('Тестовый администратор успешно создан');
-
-          return testAdmin;
-        } else {
-          console.log('Администратор уже существует. Пропускаем создание.');
-          return adminExists;
-        }
-      } catch (error) {
-        if (error.name === 'SequelizeUniqueConstraintError') {
-          console.log('Администратор уже существует');
-        } else {
-          console.error('Ошибка при создании администратора:', error.message);
-        }
-        return null;
-      }
+    if (!adminExists) {
+      const hashedPassword = await hashPassword('RtyFghVbn4884$**$');
+      
+      await User.create({
+        email: 'admin@salon.com',
+        password: hashedPassword,
+        firstName: 'Админ',
+        lastName: 'Системный',
+        birthDate: '1990-01-01',
+        phone: '+7 (999) 999-99-99',
+        role: 'admin'
+      });
     }
-  
+  } catch (error) {
+    if (error.name !== 'SequelizeUniqueConstraintError') {
+      console.error('Ошибка при создании администратора:', error.message);
+    }
+  }
+};
 
 const startServer = async () => {
   const isConnected = await testConnection();
@@ -167,11 +160,11 @@ const startServer = async () => {
     await sequelize.sync({ alter: true });
     console.log('Синхронизация моделей завершена');
 
-await createTestAdmin();
+    await createTestAdmin();
 
     const PORT = process.env.PORT || 5000;
     const server = app.listen(PORT, '0.0.0.0', () => {
-      console.log('\nСервер запущен\n');
+      console.log(`Сервер запущен на порту ${PORT}`);
     });
 
     server.timeout = 120000;
