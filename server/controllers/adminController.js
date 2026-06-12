@@ -128,19 +128,6 @@ export const deleteService = async (req, res) => {
 
 export const createCategory = async (req, res) => {
   try {
-    const categoryData = { name: req.body.name };
-    if (req.file) {
-      categoryData.photo = req.file.filename;
-    }
-    const category = await Category.create(categoryData);
-    res.status(201).json(category);
-  } catch (error) {
-    res.status(500).json({ error: error.message });
-  }
-};
-
-export const createCategory = async (req, res) => {
-  try {
     const { name } = req.body;
     const categoryData = { name };
     if (req.file) {
