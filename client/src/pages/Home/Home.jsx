@@ -29,9 +29,7 @@ const Home = () => {
   const [selectedPhoto, setSelectedPhoto] = useState(null);
   const [selectedCategory, setSelectedCategory] = useState('all');
   const [photoCurrentPage, setPhotoCurrentPage] = useState(0);
-  const [promotionsSlide, setPromotionsSlide] = useState(0);
   const photosPerPage = 6;
-  const { user } = useAuth();
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -52,47 +50,48 @@ const Home = () => {
     setPhotoCurrentPage(0);
   }, [selectedCategory]);
 
-const fetchCategories = async () => {
-  try {
-    const response = await api.get('/categories');
-    setCategories(Array.isArray(response.data) ? response.data : []);
-  } catch (error) {
-    console.error('Ошибка загрузки категорий:', error);
-    setCategories([]);
-  }
-};
+  const fetchCategories = async () => {
+    try {
+      const response = await axios.get(`${API_URL}/api/categories`);
+      setCategories(Array.isArray(response.data) ? response.data : []);
+    } catch (error) {
+      console.error('Ошибка загрузки категорий:', error);
+      setCategories([]);
+    }
+  };
 
-const fetchWorksPhotos = async () => {
-  try {
-    const response = await api.get('/work-photos');
-    setAllWorksPhotos(Array.isArray(response.data) ? response.data : []);
-    setWorksPhotos(Array.isArray(response.data) ? response.data.slice(0, photosPerPage) : []);
-  } catch (error) {
-    console.error('Ошибка загрузки фото работ:', error);
-    setAllWorksPhotos([]);
-    setWorksPhotos([]);
-  }
-};
+  const fetchWorksPhotos = async () => {
+    try {
+      const response = await axios.get(`${API_URL}/api/work-photos`);
+      setAllWorksPhotos(Array.isArray(response.data) ? response.data : []);
+      setWorksPhotos(Array.isArray(response.data) ? response.data.slice(0, photosPerPage) : []);
+    } catch (error) {
+      console.error('Ошибка загрузки фото работ:', error);
+      setAllWorksPhotos([]);
+      setWorksPhotos([]);
+    }
+  };
 
-const fetchPromotions = async () => {
-  try {
-    const response = await api.get('/promotions');
-    setPromotions(Array.isArray(response.data) ? response.data : []);
-  } catch (error) {
-    console.error('Ошибка загрузки акций:', error);
-    setPromotions([]);
-  }
-};
+  const fetchPromotions = async () => {
+    try {
+      const response = await axios.get(`${API_URL}/api/promotions`);
+      setPromotions(Array.isArray(response.data) ? response.data : []);
+    } catch (error) {
+      console.error('Ошибка загрузки акций:', error);
+      setPromotions([]);
+    }
+  };
 
-const fetchReviews = async () => {
-  try {
-    const response = await api.get('/reviews');
-    setReviews(Array.isArray(response.data) ? response.data : []);
-  } catch (error) {
-    console.error('Ошибка загрузки отзывов:', error);
-    setReviews([]);
-  }
-};
+  const fetchReviews = async () => {
+    try {
+      const response = await axios.get(`${API_URL}/api/reviews`);
+      setReviews(Array.isArray(response.data) ? response.data : []);
+    } catch (error) {
+      console.error('Ошибка загрузки отзывов:', error);
+      setReviews([]);
+    }
+  };
+
   const filterPhotosByCategory = () => {
     if (selectedCategory === 'all') {
       setWorksPhotos(allWorksPhotos.slice(0, photosPerPage));
@@ -154,24 +153,6 @@ const fetchReviews = async () => {
     setCurrentSlide(prev => Math.min(prev + 1, Math.max(0, categories.length - slidesToShow)));
   };
 
-  const handlePromotionsPrev = () => {
-    const promotionsToShow = slidesToShow > promotions.length ? promotions.length : slidesToShow;
-    setPromotionsSlide(prev => Math.max(prev - 1, 0));
-  };
-
-  const handlePromotionsNext = () => {
-    const promotionsToShow = slidesToShow > promotions.length ? promotions.length : slidesToShow;
-    setPromotionsSlide(prev => Math.min(prev + 1, Math.max(0, promotions.length - promotionsToShow)));
-  };
-
-  const handleReviewPrev = () => {
-    setReviewSlide(prev => Math.max(prev - 1, 0));
-  };
-
-  const handleReviewNext = () => {
-    setReviewSlide(prev => Math.min(prev + 1, Math.max(0, reviews.length - slidesToShow)));
-  };
-
   const handleCategoryClick = (categoryId) => {
     navigate(`/services?categoryId=${categoryId}`);
   };
@@ -189,7 +170,7 @@ const fetchReviews = async () => {
     setFeedbackStatus({ message: '', type: '' });
 
     try {
-      const response = await axios.post('/api/feedback', {
+      const response = await axios.post(`${API_URL}/api/feedback`, {
         name: feedbackForm.name,
         email: feedbackForm.email,
         message: feedbackForm.message
@@ -355,61 +336,34 @@ const fetchReviews = async () => {
 
       {promotions.length > 0 ? (
         <div className={`${styles.section} container`}>
-
           <h2 className={styles.section_title}>Акции и спецпредложения</h2>
-
-          {promotions.length > 0 && (
-            <div className={styles.slider_container}>
-             
-
-              <div className={styles.slider_wrapper}>
-                <div className={styles.slider_track} style={{ transform: `translateX(-${promotionsSlide * (100 / slidesToShow)}%)` }}>
-                  {promotions.map((promo) => (
-                    <div key={promo.id} className={styles.promotion_slide} style={{ flex: `0 0 ${100 / slidesToShow}%` }}>
-                      <div className={styles.promotion_card}>
-                        {promo.imageUrl && (
-                          <div className={styles.promotion_image}>
-                            <img src={`${API_URL}/uploads/promotions/${promo.imageUrl}`} alt={promo.title} />
-                          </div>
-                        )}
-                        <div className={styles.promotion_content}>
-                          {promo.discount && promo.discount > 0 && (
-                            <div className={styles.promotion_discount}>-{promo.discount}%</div>
-                          )}
-                          <h3>{promo.title}</h3>
-                          <p>{promo.description}</p>
-                          {promo.validTo && (
-                            <p className={styles.promotion_date}>
-                              <FiCalendar /> Действует до: {new Date(promo.validTo).toLocaleDateString()}
-                            </p>
-                          )}
-                        </div>
-                      </div>
-                    </div>
-                  ))}
+          <div className={styles.promotions_grid}>
+            {promotions.map((promo) => (
+              <div key={promo.id} className={styles.promotion_card}>
+                {promo.imageUrl && (
+                  <div className={styles.promotion_image}>
+                    <img src={`${API_URL}/uploads/promotions/${promo.imageUrl}`} alt={promo.title} />
+                  </div>
+                )}
+                <div className={styles.promotion_content}>
+                  {promo.discount && promo.discount > 0 && (
+                    <div className={styles.promotion_discount}>-{promo.discount}%</div>
+                  )}
+                  <h3>{promo.title}</h3>
+                  <p>{promo.description}</p>
+                  {promo.validTo && (
+                    <p className={styles.promotion_date}>
+                      <FiCalendar /> Действует до: {new Date(promo.validTo).toLocaleDateString()}
+                    </p>
+                  )}
                 </div>
               </div>
-
-           
-            </div>
-          )}
-
-          {promotions.length > slidesToShow && (
-            <div className={styles.slider_dots}>
-              {Array.from({ length: Math.ceil(promotions.length / slidesToShow) }).map((_, index) => (
-                <button
-                  key={index}
-                  className={`${styles.slider_dot} ${promotionsSlide === index ? styles.active : ''}`}
-                  onClick={() => setPromotionsSlide(index)}
-                />
-              ))}
-            </div>
-          )}
+            ))}
+          </div>
         </div>
       ) : (
         <div className={`${styles.section} container`}>
-
-          <h2 className={styles.section_title}> Акции и спецпредложения</h2>
+          <h2 className={styles.section_title}>Акции и спецпредложения</h2>
           <div className={styles.no_promotions}>
             <h3>На данный момент нет активных акций</h3>
             <p>Следите за обновлениями, скоро появятся новые спецпредложения!</p>
@@ -419,33 +373,26 @@ const fetchReviews = async () => {
 
       <div className={`${styles.section} ${styles.section_gray}`}>
         <div className='container'>
-          <h2 className={styles.section_title}> Отзывы клиентов</h2>
+          <h2 className={styles.section_title}>Отзывы клиентов</h2>
 
-          {reviews.length > 0 && (
-            <div className={styles.slider_container}>
-             
-
-              <div className={styles.slider_wrapper}>
-                <div className={styles.slider_track} style={{ transform: `translateX(-${reviewSlide * (100 / slidesToShow)}%)` }}>
-                  {reviews.map((review) => (
-                    <div key={review.id} className={styles.review_item} style={{ flex: `0 0 ${100 / slidesToShow}%` }}>
-                      <div className={styles.review_card}>
-                        <div className={styles.review_rating}>{renderStars(review.rating)}</div>
-                        <p className={styles.review_text}>"{review.text}"</p>
-                        <div className={styles.review_author}>
-                          <strong>{review.User?.firstName} {review.User?.lastName}</strong>
-                          <span>мастер: {review.Master?.User?.firstName} {review.Master?.User?.lastName}</span>
-                        </div>
-                      </div>
-                    </div>
-                  ))}
+          {reviews.length > 0 ? (
+            <div className={styles.reviews_grid}>
+              {reviews.map((review) => (
+                <div key={review.id} className={styles.review_card}>
+                  <div className={styles.review_rating}>{renderStars(review.rating)}</div>
+                  <p className={styles.review_text}>"{review.text}"</p>
+                  <div className={styles.review_author}>
+                    <strong>{review.User?.firstName} {review.User?.lastName}</strong>
+                    <span>мастер: {review.Master?.User?.firstName} {review.Master?.User?.lastName}</span>
+                  </div>
                 </div>
-              </div>
-
+              ))}
+            </div>
+          ) : (
+            <div className={styles.empty_state}>
+              <p>Пока нет отзывов</p>
             </div>
           )}
-
-
         </div>
       </div>
 
