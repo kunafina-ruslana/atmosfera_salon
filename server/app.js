@@ -75,6 +75,42 @@ app.get('/api/services/categories', async (req, res) => {
   }
 });
 
+app.get('/api/services', async (req, res) => {
+  try {
+    const services = await Service.findAll({
+      include: [{ model: Category, attributes: ['name'] }]
+    });
+    res.json(services);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+app.get('/api/users', async (req, res) => {
+  try {
+    const users = await User.findAll({
+      attributes: { exclude: ['password'] }
+    });
+    res.json(users);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+app.get('/api/reviews/all', async (req, res) => {
+  try {
+    const reviews = await Review.findAll({
+      include: [
+        { model: User, attributes: ['id', 'firstName', 'lastName', 'email'] },
+        { model: Master, include: [{ model: User, attributes: ['firstName', 'lastName'] }] }
+      ]
+    });
+    res.json(reviews);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
 app.get('/api/public/work-photos', async (req, res) => {
   try {
     const worksDir = path.join(__dirname, 'uploads', 'works');
