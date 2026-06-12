@@ -56,46 +56,85 @@ const AdminPanel = () => {
     setLoading(false);
   };
 
-  const fetchUsers = async () => {
+const fetchUsers = async () => {
+  try {
     const response = await axios.get('/api/admin/users');
-    setUsers(response.data);
-  };
+    setUsers(Array.isArray(response.data) ? response.data : []);
+  } catch (error) {
+    console.error('Ошибка загрузки пользователей:', error);
+    setUsers([]);
+  }
+};
 
-  const fetchServices = async () => {
+const fetchServices = async () => {
+  try {
     const response = await axios.get('/api/services');
-    setServices(response.data);
-  };
+    setServices(Array.isArray(response.data) ? response.data : []);
+  } catch (error) {
+    console.error('Ошибка загрузки услуг:', error);
+    setServices([]);
+  }
+};
 
-  const fetchCategories = async () => {
+const fetchCategories = async () => {
+  try {
     const response = await axios.get('/api/services/categories');
-    setCategories(response.data);
-  };
+    setCategories(Array.isArray(response.data) ? response.data : []);
+  } catch (error) {
+    console.error('Ошибка загрузки категорий:', error);
+    setCategories([]);
+  }
+};
 
-  const fetchMasters = async () => {
+const fetchMasters = async () => {
+  try {
     const response = await axios.get('/api/admin/masters');
-    setMasters(response.data);
-  };
+    setMasters(Array.isArray(response.data) ? response.data : []);
+  } catch (error) {
+    console.error('Ошибка загрузки мастеров:', error);
+    setMasters([]);
+  }
+};
 
-  const fetchAppointments = async () => {
+const fetchAppointments = async () => {
+  try {
     const response = await axios.get('/api/admin/appointments');
-    setAppointments(response.data);
-  };
+    setAppointments(Array.isArray(response.data) ? response.data : []);
+  } catch (error) {
+    console.error('Ошибка загрузки записей:', error);
+    setAppointments([]);
+  }
+};
 
-  const fetchReviews = async () => {
+const fetchReviews = async () => {
+  try {
     const response = await axios.get('/api/reviews/all');
-    setReviews(response.data);
-  };
+    setReviews(Array.isArray(response.data) ? response.data : []);
+  } catch (error) {
+    console.error('Ошибка загрузки отзывов:', error);
+    setReviews([]);
+  }
+};
 
-  const fetchWorkPhotos = async () => {
+const fetchWorkPhotos = async () => {
+  try {
     const response = await axios.get('/api/admin/work-photos');
-    setWorkPhotos(response.data);
-  };
+    setWorkPhotos(Array.isArray(response.data) ? response.data : []);
+  } catch (error) {
+    console.error('Ошибка загрузки фото работ:', error);
+    setWorkPhotos([]);
+  }
+};
 
-  const fetchPromotions = async () => {
+const fetchPromotions = async () => {
+  try {
     const response = await axios.get('/api/admin/promotions');
-    setPromotions(response.data);
-  };
-
+    setPromotions(Array.isArray(response.data) ? response.data : []);
+  } catch (error) {
+    console.error('Ошибка загрузки акций:', error);
+    setPromotions([]);
+  }
+};
   const handleAddClick = () => {
     switch (activeTab) {
       case 'users':
@@ -147,54 +186,80 @@ const AdminPanel = () => {
     { id: 'workPhotos', label: 'Фото работ' },
     { id: 'promotions', label: 'Акции' }
   ];
-
-  const getFilteredData = () => {
-    const term = searchTerm.toLowerCase();
+const getFilteredData = () => {
+  const term = searchTerm.toLowerCase();
+  let data = [];
+  
+  switch (activeTab) {
+    case 'users':
+      data = users;
+      break;
+    case 'services':
+      data = services;
+      break;
+    case 'categories':
+      data = categories;
+      break;
+    case 'masters':
+      data = masters;
+      break;
+    case 'appointments':
+      data = appointments;
+      break;
+    case 'reviews':
+      data = reviews;
+      break;
+    case 'workPhotos':
+      data = workPhotos;
+      break;
+    case 'promotions':
+      data = promotions;
+      break;
+    default:
+      data = [];
+  }
+  
+  if (!Array.isArray(data)) {
+    return [];
+  }
+  
+  if (!term) {
+    return data;
+  }
+  
+  return data.filter(item => {
     switch (activeTab) {
       case 'users':
-        return users.filter(u =>
-          u.firstName?.toLowerCase().includes(term) ||
-          u.lastName?.toLowerCase().includes(term) ||
-          u.email?.toLowerCase().includes(term)
-        );
+        return (item.firstName?.toLowerCase().includes(term) ||
+                item.lastName?.toLowerCase().includes(term) ||
+                item.email?.toLowerCase().includes(term));
       case 'services':
-        return services.filter(s =>
-          s.name?.toLowerCase().includes(term) ||
-          s.description?.toLowerCase().includes(term)
-        );
+        return (item.name?.toLowerCase().includes(term) ||
+                item.description?.toLowerCase().includes(term));
       case 'categories':
-        return categories.filter(c => c.name?.toLowerCase().includes(term));
+        return item.name?.toLowerCase().includes(term);
       case 'masters':
-        return masters.filter(m =>
-          `${m.User?.firstName} ${m.User?.lastName}`.toLowerCase().includes(term) ||
-          m.User?.email?.toLowerCase().includes(term)
-        );
+        return (`${item.User?.firstName} ${item.User?.lastName}`.toLowerCase().includes(term) ||
+                item.User?.email?.toLowerCase().includes(term));
       case 'appointments':
-        return appointments.filter(a =>
-          a.Service?.name?.toLowerCase().includes(term) ||
-          a.User?.firstName?.toLowerCase().includes(term) ||
-          a.User?.lastName?.toLowerCase().includes(term)
-        );
+        return (item.Service?.name?.toLowerCase().includes(term) ||
+                item.User?.firstName?.toLowerCase().includes(term) ||
+                item.User?.lastName?.toLowerCase().includes(term));
       case 'reviews':
-        return reviews.filter(r =>
-          r.text?.toLowerCase().includes(term) ||
-          r.User?.firstName?.toLowerCase().includes(term) ||
-          r.User?.lastName?.toLowerCase().includes(term)
-        );
+        return (item.text?.toLowerCase().includes(term) ||
+                item.User?.firstName?.toLowerCase().includes(term) ||
+                item.User?.lastName?.toLowerCase().includes(term));
       case 'workPhotos':
-        return workPhotos.filter(p =>
-          p.masterName?.toLowerCase().includes(term) ||
-          p.description?.toLowerCase().includes(term)
-        );
+        return (item.masterName?.toLowerCase().includes(term) ||
+                item.description?.toLowerCase().includes(term));
       case 'promotions':
-        return promotions.filter(p =>
-          p.title?.toLowerCase().includes(term) ||
-          p.description?.toLowerCase().includes(term)
-        );
+        return (item.title?.toLowerCase().includes(term) ||
+                item.description?.toLowerCase().includes(term));
       default:
-        return [];
+        return true;
     }
-  };
+  });
+};
 
   const handleRefresh = () => {
     fetchData();

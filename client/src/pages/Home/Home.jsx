@@ -52,43 +52,47 @@ const Home = () => {
     setPhotoCurrentPage(0);
   }, [selectedCategory]);
 
-  const fetchCategories = async () => {
-    try {
-      const response = await axios.get('/api/services/categories');
-      setCategories(response.data);
-    } catch (error) {
-      console.error('Ошибка загрузки категорий:', error);
-    }
-  };
+const fetchCategories = async () => {
+  try {
+    const response = await api.get('/categories');
+    setCategories(Array.isArray(response.data) ? response.data : []);
+  } catch (error) {
+    console.error('Ошибка загрузки категорий:', error);
+    setCategories([]);
+  }
+};
 
-  const fetchWorksPhotos = async () => {
-    try {
-      const response = await axios.get('/api/public/work-photos');
-      setAllWorksPhotos(response.data);
-      setWorksPhotos(response.data.slice(0, photosPerPage));
-    } catch (error) {
-      console.error('Ошибка загрузки фото работ:', error);
-    }
-  };
+const fetchWorksPhotos = async () => {
+  try {
+    const response = await api.get('/work-photos');
+    setAllWorksPhotos(Array.isArray(response.data) ? response.data : []);
+    setWorksPhotos(Array.isArray(response.data) ? response.data.slice(0, photosPerPage) : []);
+  } catch (error) {
+    console.error('Ошибка загрузки фото работ:', error);
+    setAllWorksPhotos([]);
+    setWorksPhotos([]);
+  }
+};
 
-  const fetchPromotions = async () => {
-    try {
-      const response = await axios.get('/api/public/promotions');
-      setPromotions(response.data);
-    } catch (error) {
-      console.error('Ошибка загрузки акций:', error);
-    }
-  };
+const fetchPromotions = async () => {
+  try {
+    const response = await api.get('/promotions');
+    setPromotions(Array.isArray(response.data) ? response.data : []);
+  } catch (error) {
+    console.error('Ошибка загрузки акций:', error);
+    setPromotions([]);
+  }
+};
 
-  const fetchReviews = async () => {
-    try {
-      const response = await axios.get('/api/reviews');
-      setReviews(response.data);
-    } catch (error) {
-      console.error('Ошибка загрузки отзывов:', error);
-    }
-  };
-
+const fetchReviews = async () => {
+  try {
+    const response = await api.get('/reviews');
+    setReviews(Array.isArray(response.data) ? response.data : []);
+  } catch (error) {
+    console.error('Ошибка загрузки отзывов:', error);
+    setReviews([]);
+  }
+};
   const filterPhotosByCategory = () => {
     if (selectedCategory === 'all') {
       setWorksPhotos(allWorksPhotos.slice(0, photosPerPage));
